@@ -12,6 +12,7 @@ export @def_singleton
     @def_singleton singleton_name
     @def_singleton singleton_name::SingletonType
     @def_singleton singleton_name::SingletonType <: SuperType
+    @def_singleton singleton_name isa SuperType
     @def_singleton singleton_name = SingletonType()
 
 Define a singleton named `singleton_name` and its two-argument
@@ -52,6 +53,11 @@ true
 
 julia> MySingletonType2 <: MySuperType
 true
+
+julia> @def_singleton mysingleton3 isa MySuperType;
+
+julia> mysingleton3 isa MySuperType
+true
 ```
 
 With pre-existing parametric type:
@@ -78,9 +84,9 @@ end
 
 function handle_gentype(ex)
     super_type = Any
+    type_name = nothing
     if ex isa Symbol
         singleton_name = ex
-        type_name = gensym(string("typeof_", singleton_name))
     elseif Meta.isexpr(ex, :(::), 2)
         singleton_name, type_name = ex.args
         if Meta.isexpr(type_name, :(<:), 2)
@@ -93,8 +99,13 @@ function handle_gentype(ex)
         else
             return nothing
         end
+    elseif Meta.isexpr(ex, :call, 3) && ex.args[1] === :isa
+        _, singleton_name, super_type = ex.args
     else
         return nothing
+    end
+    if type_name === nothing
+        type_name = gensym(string("typeof_", singleton_name))
     end
     show_def = define_show(singleton_name, type_name)
     singleton_name = esc(singleton_name)
