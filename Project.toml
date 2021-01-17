@@ -1,7 +1,7 @@
 name = "DefineSingletons"
 uuid = "244e2a9f-e319-4986-a169-4d1fe445cd52"
 authors = ["Takafumi Arakaki <aka.tkf@gmail.com>"]
-version = "0.1.1-DEV"
+version = "0.1.1"
 
 [compat]
 julia = "1"
