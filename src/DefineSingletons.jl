@@ -141,17 +141,23 @@ function handle_predefined(ex)
 end
 
 function define_show(singleton_name::Symbol, type_name)
-    singleton_name = string(singleton_name)
     type_name = esc(type_name)
     quote
-        function Base.show(io::IO, x::$type_name)
-            if !get(io, :limit, false)
-                # Don't show full name in REPL etc.:
-                print(io, parentmodule($type_name), '.')
-            end
-            print(io, $singleton_name)
-        end
+        Base.show(io::IO, ::$type_name) = DefineSingletons.show_impl(
+            io,
+            parentmodule($type_name),
+            $(QuoteNode(singleton_name)),
+        )
+        Base.print(io::IO, ::$type_name) = print(io, $(QuoteNode(singleton_name)))
     end
+end
+
+function show_impl(io::IO, namespace::Module, singleton_name::Symbol)
+    if !get(io, :limit, false)
+        # Don't show full name in REPL etc.:
+        print(io, namespace, '.')
+    end
+    print(io, singleton_name)
 end
 
 end # module

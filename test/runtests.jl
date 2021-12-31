@@ -57,6 +57,14 @@ issingleton(x) = Base.issingletontype(typeof(x))
         repr(singleton_predefined_parametric),
         ".singleton_predefined_parametric",
     )
+
+    @test string(singleton_gentype_gensym) == "singleton_gentype_gensym"
+    @test string(singleton_gentype_withname) == "singleton_gentype_withname"
+    @test string(singleton_gentype_withsuper1) == "singleton_gentype_withsuper1"
+    @test string(singleton_gentype_withsuper2) == "singleton_gentype_withsuper2"
+    @test string(singleton_gentype_withsuper3) == "singleton_gentype_withsuper3"
+    @test string(singleton_predefined_nonparametric) == "singleton_predefined_nonparametric"
+    @test string(singleton_predefined_parametric) == "singleton_predefined_parametric"
 end
 
 @testset "doctest" begin
